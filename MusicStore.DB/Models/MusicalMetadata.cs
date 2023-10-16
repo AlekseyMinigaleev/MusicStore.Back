@@ -10,28 +10,20 @@ namespace MusicStore.DB.Models
 
         public MusicTempo Tempo { get; private set; }
 
-        public string Arrangement { get; private set; }
-
-        public string Dynamics { get; private set; }
-
         public string Interpretation { get; private set; }
 
-        public Performance Performance { get; set; }
-        public Guid PerformanceId { get; set; }
+        public Performance Performance { get; private set; }
+        public Guid PerformanceId { get; private set; }
 
         public MusicalMetadata(
             double duration,
             MusicTempo tempo,
-            string arrangement,
-            string dynamics,
             string interpretation,
             Performance performance)
         {
             Id = Guid.NewGuid();
             Duration = duration;
             Tempo = tempo;
-            Arrangement = arrangement;
-            Dynamics = dynamics;
             Interpretation = interpretation;
             Performance = performance;
             PerformanceId = performance.Id;
