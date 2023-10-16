@@ -14,6 +14,10 @@ namespace MusicStore.DB.ModelsConfigurations
             builder.HasMany(x => x.Performances)
                 .WithOne(x => x.Music)
                 .HasForeignKey(x => x.MusicId);
+
+            builder.HasOne(x => x.Autor)
+                .WithMany(x => x.Musics)
+                .HasForeignKey(x => x.AuthorId);
         }
     }
 }

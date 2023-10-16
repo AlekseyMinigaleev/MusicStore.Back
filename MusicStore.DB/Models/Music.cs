@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace MusicStore.DB.Models
+﻿namespace MusicStore.DB.Models
 {
     public class Music
     {
@@ -10,13 +8,15 @@ namespace MusicStore.DB.Models
         
         public string Genre { get; private set;}
 
-        public string Autor { get; set; }
+        public Songwriter Autor { get; private set; }
+        public Guid AuthorId { get; private set; }
 
         public ISet<Performance> Performances { get; private set; }
+
         public ISet<CompactDisk> CompactDisks { get; private set; }
 
         public Music(
-            string autorFIO,
+            Songwriter author,
             string name,
             string genre,
             ISet<Performance> performances,
@@ -27,7 +27,8 @@ namespace MusicStore.DB.Models
             Genre = genre;
             Performances = performances;
             CompactDisks = compactDisks;
-            Autor = autorFIO;
+            Autor = author;
+            AuthorId = author.Id;
         }
 
         private Music() { }

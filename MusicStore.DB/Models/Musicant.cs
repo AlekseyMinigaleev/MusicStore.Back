@@ -1,34 +1,32 @@
-﻿namespace MusicStore.DB.Models
+﻿using MusicStore.DB.Models.Base;
+
+namespace MusicStore.DB.Models
 {
-    public class Musicant : EnsembleMember
+    public class Musicant : PersonBase
     {
+        public Guid Id { get; private set; }
+
         public string MusicalInstrument { get; private set; }
 
-        public ISet<Ensemble> MusicantEnsembles { get; set; }
+        public ISet<Ensemble> Ensembles { get; private set; }
 
         public Musicant(
             string firstName,
-            string lastName,
+            string secondName,
             string? patronomyc,
-            string profileLink,
-            ISet<Ensemble> leaderEnsembles,
-            ISet<Ensemble> composerEnsembles,
-            ISet<Ensemble> orchestraConductorEnsembles,
-            string musicalInstrument) : base(
+            string musicalInstrument,
+            ISet<Ensemble> ensembles
+            ):base(
                 firstName:firstName,
-                lastName:lastName,
-                patronomyc:patronomyc,
-                profileLink:profileLink,
-                orchestraConductorEnsembles: orchestraConductorEnsembles,
-                composerEnsembles:composerEnsembles,
-                leaderEnsembles:leaderEnsembles)
+                secondName:secondName,
+                patronomyc:patronomyc)
         {
+            Id = Guid.NewGuid();
             MusicalInstrument = musicalInstrument;
+            Ensembles = ensembles;
         }
 
-        private Musicant() :base()
+        private Musicant(): base()
         { }
-
-
     }
 }
