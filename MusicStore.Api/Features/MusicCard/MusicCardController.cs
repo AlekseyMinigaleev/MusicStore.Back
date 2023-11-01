@@ -51,5 +51,21 @@ namespace MusicStore.Api.Features.MusicCard
 
             return Ok();
         }
+
+        [HttpDelete("delete")]
+        public async Task<ActionResult> DeleteMusicCardAsync(
+            [FromBody] DeleteMusicCard.Command command,
+            [FromServices] IValidator<DeleteMusicCard.Command> validator,
+            CancellationToken cancellationToken)
+        {
+            await ValidateAndChangeModelStateAsync(validator, command, cancellationToken);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await Mediator.Send(command, cancellationToken);
+
+            return Ok();
+        }
     }
 }

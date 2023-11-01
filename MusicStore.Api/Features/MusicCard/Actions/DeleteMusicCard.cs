@@ -7,12 +7,12 @@ namespace MusicStore.Api.Features.MusicCard.Actions
 {
     public class DeleteMusicCard
     {
-        public class Query : IRequest
+        public class Command : IRequest
         {
             public Guid[] Ids { get; set; }
         }
 
-        public class QueryValidator : AbstractValidator<Query>
+        public class QueryValidator : AbstractValidator<Command>
         {
             public QueryValidator(MusicStoreDbContext dbContext)
             {
@@ -45,7 +45,7 @@ namespace MusicStore.Api.Features.MusicCard.Actions
             }
         }
 
-        public class Handler : IRequestHandler<Query>
+        public class Handler : IRequestHandler<Command>
         {
             private readonly MusicStoreDbContext _dbContext;
 
@@ -54,7 +54,7 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                 _dbContext = dbContext;
             }
 
-            public async Task Handle(Query request, CancellationToken cancellationToken)
+            public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var musics = await _dbContext.Musics
                     .Where(x => request.Ids.Contains(x.Id))

@@ -110,6 +110,7 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                 } };
 
                 var ensemble = new Ensemble(
+                    name:"",
                     musicants: Array.Empty<Musicant>().ToHashSet(),
                     ensumbleTypeRuleDto: typeRulesDto,
                     performance: Array.Empty<Performance>().ToHashSet()

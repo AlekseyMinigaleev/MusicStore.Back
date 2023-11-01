@@ -7,17 +7,21 @@ namespace MusicStore.DB.Models
         public Guid Id { get; private set; }
         
         public string Type { get; private set; }
+
+        public string Name { get; private set; }
         
         public ISet<Performance> Performances { get; private set; }
 
         public ISet<Musicant> Musicants { get; private set; }
 
         public Ensemble(
+            string name,
             ISet<Musicant> musicants,
             EnsembleTypeRuleDto[] ensumbleTypeRuleDto,
             ISet<Performance> performance)
         {
             Id = Guid.NewGuid();
+            Name = name;
             Musicants = musicants;
             Type = EvaluateEnsembleType(ensumbleTypeRuleDto);
             Performances = performance;

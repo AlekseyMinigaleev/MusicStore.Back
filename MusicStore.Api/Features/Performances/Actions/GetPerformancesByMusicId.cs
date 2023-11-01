@@ -34,7 +34,7 @@ namespace MusicStore.Api.Features.Performances.Actions
         {
             public ViewModelProfiler()
             {
-                CreateMap<DB.Models.Performance, ViewModel>();
+                CreateMap<Performance, ViewModel>();
             }
         }
 

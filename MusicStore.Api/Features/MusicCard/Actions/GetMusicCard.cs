@@ -57,40 +57,6 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                 Query request,
                 CancellationToken cancellationToken)
             {
-
-                var music = _dbContext.Musics.First();
-                var typeRulesDto =new []{ new EnsembleTypeRuleDto()
-                {
-                    Type ="123",
-                    HasComposer = true,
-                    HasLeader = true,
-                    HasOrchestraConductor = true,
-                    MusicalInstrumentCount = new Dictionary<string, int> {[""] = 1 }
-                } };
-
-                var ensemble = new Ensemble(
-                    musicants: Array.Empty<Musicant>().ToHashSet(),
-                    ensumbleTypeRuleDto: typeRulesDto,
-                    performance: Array.Empty<Performance>().ToHashSet()
-                    );
-
-                var musicalMetadata = new MusicalMetadata(
-                    12.6,
-                    MusicTempo.Adagietto,
-                    "123"
-                    );
-
-                var performance = new Performance(
-                    place: "",
-                    name: "",
-                    ensambel: ensemble,
-                    musicalMetadata: musicalMetadata,
-                    music: music
-                    );
-
-                _dbContext.Performances.Add(performance);
-                _dbContext.SaveChanges();
-
                 var musicCards = await _dbContext.Musics
                     .ProjectTo<MusicCardViewModel>(_mapper.ConfigurationProvider)
                     .ToArrayAsync(cancellationToken);
