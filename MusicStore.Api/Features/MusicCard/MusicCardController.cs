@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MusicStore.Api.Features.MusicCard.Actions;
 
@@ -11,12 +12,44 @@ namespace MusicStore.Api.Features.MusicCard
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult> GetMusicCards(CancellationToken cancellationToken)
+        public async Task<ActionResult> GetMusicCardAsync(CancellationToken cancellationToken)
         {
-            var query = new GetMusicCards.Query();
+            var query = new GetMusicCard.Query();
             var result = await Mediator.Send(query, cancellationToken);
 
             return Ok(result);
+        }
+
+        [HttpPut("update")]
+        public async Task<ActionResult> UpdateMusicCardAsync(
+            [FromBody] UpdateMusicCard.Command command,
+            [FromServices] IValidator<UpdateMusicCard.Command> validator,
+            CancellationToken cancellationToken)
+        {
+            await ValidateAndChangeModelStateAsync(validator, command, cancellationToken);
+
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await Mediator.Send(command, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateMusicCardAsync(
+            [FromBody] CreateMusicCard.Command command,
+            [FromServices] IValidator<CreateMusicCard.Command> validator,
+            CancellationToken cancellationToken)
+        {
+            await ValidateAndChangeModelStateAsync(validator, command, cancellationToken);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await Mediator.Send(command, cancellationToken);
+
+            return Ok();
         }
     }
 }

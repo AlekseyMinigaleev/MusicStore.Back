@@ -2,13 +2,13 @@
 {
     public class Music
     {
-        public Guid Id { get; private set;} 
-        
-        public string Name { get; private set;} 
-        
-        public string Genre { get; private set;}
+        public Guid Id { get; private set; }
 
-        public Songwriter Autor { get; private set; }
+        public string Name { get; private set; }
+
+        public string Genre { get; private set; }
+
+        public Songwriter Author { get; private set; }
         public Guid AuthorId { get; private set; }
 
         public ISet<Performance> Performances { get; private set; }
@@ -27,10 +27,21 @@
             Genre = genre;
             Performances = performances;
             CompactDisks = compactDisks;
-            Autor = author;
+            Author = author;
             AuthorId = author.Id;
         }
 
-        private Music() { }
+        private Music()
+        { }
+
+        public void Update(
+            Guid authorId,
+            string name,
+            string genre)
+        {
+            AuthorId = authorId;
+            Name = name;
+            Genre = genre;
+        }
     }
 }

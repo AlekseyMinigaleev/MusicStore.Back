@@ -119,7 +119,7 @@ namespace MusicStore.DB.Migrations
                     cmd.Parameters.AddWithValue("@Id", music.Id);
                     cmd.Parameters.AddWithValue("@Name", music.Name);
                     cmd.Parameters.AddWithValue("@Genre", music.Genre);
-                    cmd.Parameters.AddWithValue("@AuthorId", music.Autor.Id);
+                    cmd.Parameters.AddWithValue("@AuthorId", music.Author.Id);
 
                     cmd.ExecuteNonQuery();
                 }

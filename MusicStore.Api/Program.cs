@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    //options.CustomSchemaIds(ShemaClassesIdsRenamer.Selector);
+    options.CustomSchemaIds(ShemaClassesIdsRenamer.Selector);
 });
 builder.Services.AddCors();
 builder.Services.AddDbContext<MusicStoreDbContext>(options =>
