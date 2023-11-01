@@ -10,11 +10,11 @@ namespace MusicStore.DB.Models
 
         public Songwriter(
             string firstName,
-            string secondName,
+            string lastName,
             string? patronomyc,
             ISet<Music> musics) : base(
                 firstName: firstName,
-                secondName: secondName,
+                lastName: lastName,
                 patronomyc: patronomyc)
         {
             Id = Guid.NewGuid();

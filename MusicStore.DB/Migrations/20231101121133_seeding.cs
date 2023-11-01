@@ -10,10 +10,6 @@ namespace MusicStore.DB.Migrations
     /// <inheritdoc />
     public partial class seeding : Migration
     {
-        public seeding()
-        {
-
-        }
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,11 +17,11 @@ namespace MusicStore.DB.Migrations
                 .CustomInstantiator(f =>
                     new Songwriter(
                         firstName: f.Name.FirstName(),
-                        secondName: f.Name.LastName(),
+                        lastName: f.Name.LastName(),
                         patronomyc: "",
                         musics: new List<Music>().ToHashSet()));
 
-           
+
 
             var manufactoringCompanyFaker = new Faker<ManufacturingCompany>()
                 .CustomInstantiator(f =>
@@ -40,10 +36,10 @@ namespace MusicStore.DB.Migrations
                  .CustomInstantiator(f =>
                     new Musicant(
                         firstName: f.Name.FirstName(),
-                        secondName: f.Name.LastName(),
+                        lastName: f.Name.LastName(),
                         patronomyc: "",
                         musicalInstrument: f.Random.ListItem(new[] { "Скрипка", "Виолончель", "Флейта", "Кларнет", "Фагот", "Труба", "Тромбон", "Туба", "Контрабас", "Альт", "Гобой", "Валторна", "Ударные инструменты (барабаны, ксилофон и др.)", "Саксофон (альт, тенор, баритон)", "Электрогитара", "Бас-гитара", "Пианино", "Гитара", "Клавесин", "Орган", "Барабаны с малой плотностью", "Акустическая гитара", "Перкуссия (тамбурин, маракасы)", "Гармоника", "Мандолина", "Банджо", "Аккордеон", "Концертина", "Баритон" }),
-                        ensembles:new List<Ensemble>().ToHashSet()
+                        ensembles: new List<Ensemble>().ToHashSet()
                         ));
 
             var manufactoringCompanies = manufactoringCompanyFaker.Generate(2);
@@ -72,15 +68,14 @@ namespace MusicStore.DB.Migrations
             {
                 foreach (var company in manufactoringCompanies)
                 {
-                    var insertQuery = "INSERT INTO ManufactoringCompany (Id, Name, ShortName, Address, WhosalerPrice) " +
-                                         "VALUES (@Id, @Name, @ShortName, @Address, @WhosalerPrice)";
+                    var insertQuery = "INSERT INTO ManufactoringCompany (Id, Name, ShortName, Address) " +
+                                         "VALUES (@Id, @Name, @ShortName, @Address)";
 
                     using var cmd = new SqlCommand(insertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@Id", company.Id);
                     cmd.Parameters.AddWithValue("@Name", company.Name);
                     cmd.Parameters.AddWithValue("@ShortName", company.ShortName);
                     cmd.Parameters.AddWithValue("@Address", company.Address);
-
                     cmd.ExecuteNonQuery();
                 }
 
@@ -92,7 +87,7 @@ namespace MusicStore.DB.Migrations
                     using var cmd = new SqlCommand(insertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@Id", musicant.Id);
                     cmd.Parameters.AddWithValue("@FirstName", musicant.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", musicant.SecondName);
+                    cmd.Parameters.AddWithValue("@LastName", musicant.LastName);
                     cmd.Parameters.AddWithValue("@Patronomyc", musicant.Patronomyc);
                     cmd.Parameters.AddWithValue("@MusicalInstrument", musicant.MusicalInstrument);
 
@@ -107,29 +102,29 @@ namespace MusicStore.DB.Migrations
                     using var cmd = new SqlCommand(insertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@Id", songwriter.Id);
                     cmd.Parameters.AddWithValue("@FirstName", songwriter.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", songwriter.SecondName);
+                    cmd.Parameters.AddWithValue("@LastName", songwriter.LastName);
                     cmd.Parameters.AddWithValue("@Patronomyc", songwriter.Patronomyc);
 
                     cmd.ExecuteNonQuery();
                 }
 
-                
+
 
                 foreach (var music in musics)
                 {
-                    var insertQuery = "INSERT INTO Music (Id, Name, Genre, AutorId)" +
-                                        "VALUES (@Id, @Name, @Genre, @Autor)";
+                    var insertQuery = "INSERT INTO Music (Id, Name, Genre, AuthorId)" +
+                                        "VALUES (@Id, @Name, @Genre,@AuthorId)";
 
                     using var cmd = new SqlCommand(insertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@Id", music.Id);
                     cmd.Parameters.AddWithValue("@Name", music.Name);
                     cmd.Parameters.AddWithValue("@Genre", music.Genre);
-                    cmd.Parameters.AddWithValue("@AutorId", music.Autor.Id);
+                    cmd.Parameters.AddWithValue("@AuthorId", music.Autor.Id);
 
                     cmd.ExecuteNonQuery();
                 }
 
-                
+
 
                 transaction.Commit();
             }
@@ -143,6 +138,7 @@ namespace MusicStore.DB.Migrations
                 Console.WriteLine(e.Message);
             }
         }
+
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {

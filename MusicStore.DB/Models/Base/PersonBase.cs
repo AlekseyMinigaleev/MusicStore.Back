@@ -4,17 +4,17 @@
     {
         public string FirstName { get; set; }
 
-        public string SecondName { get; set; }
+        public string LastName { get; set; }
 
         public string? Patronomyc { get; set; }
 
         public PersonBase(
             string firstName,
-            string secondName,
+            string lastName,
             string? patronomyc)
         {
             FirstName = firstName;
-            SecondName = secondName;
+            LastName = lastName;
             Patronomyc = patronomyc;
         }
 

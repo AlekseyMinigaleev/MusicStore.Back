@@ -12,13 +12,13 @@ namespace MusicStore.DB.Models
 
         public Musicant(
             string firstName,
-            string secondName,
+            string lastName,
             string? patronomyc,
             string musicalInstrument,
             ISet<Ensemble> ensembles
             ):base(
                 firstName:firstName,
-                secondName:secondName,
+                lastName:lastName,
                 patronomyc:patronomyc)
         {
             Id = Guid.NewGuid();

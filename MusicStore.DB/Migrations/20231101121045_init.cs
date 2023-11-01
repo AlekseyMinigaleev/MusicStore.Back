@@ -12,20 +12,15 @@ namespace MusicStore.DB.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "EnsembleMembers",
+                name: "Ensemble",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Patronomyc = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfileLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MusicalInstrument = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EnsembleMembers", x => x.Id);
+                    table.PrimaryKey("PK_Ensemble", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,12 +30,64 @@ namespace MusicStore.DB.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShortName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WhosalerPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ManufactoringCompany", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Musicant",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MusicalInstrument = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Patronomyc = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Musicant", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Songwriter",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Patronomyc = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Songwriter", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EnsambleMusicant",
+                columns: table => new
+                {
+                    EnsemblesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MusicantsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EnsambleMusicant", x => new { x.EnsemblesId, x.MusicantsId });
+                    table.ForeignKey(
+                        name: "FK_EnsambleMusicant_Ensemble_EnsemblesId",
+                        column: x => x.EnsemblesId,
+                        principalTable: "Ensemble",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EnsambleMusicant_Musicant_MusicantsId",
+                        column: x => x.MusicantsId,
+                        principalTable: "Musicant",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,42 +96,18 @@ namespace MusicStore.DB.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Music", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ensemble",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LeaderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ComposerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OrchestraConductorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PerformanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ensemble", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ensemble_EnsembleMembers_Composer",
-                        column: x => x.ComposerId,
-                        principalTable: "EnsembleMembers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Ensemble_EnsembleMembers_Leader",
-                        column: x => x.LeaderId,
-                        principalTable: "EnsembleMembers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Ensemble_EnsembleMembers_OrhestraConductor",
-                        column: x => x.OrchestraConductorId,
-                        principalTable: "EnsembleMembers",
-                        principalColumn: "Id");
+                        name: "FK_Music_Songwriter_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Songwriter",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,14 +116,14 @@ namespace MusicStore.DB.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MusicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ManufacturingCompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RetailPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WhosalerPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CountInStock = table.Column<int>(type: "int", nullable: false),
                     CountSoldPreviousYear = table.Column<int>(type: "int", nullable: true),
-                    CountSoldCurrentYear = table.Column<int>(type: "int", nullable: false)
+                    CountSoldCurrentYear = table.Column<int>(type: "int", nullable: false),
+                    MusicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ManufacturingCompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -120,37 +143,15 @@ namespace MusicStore.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnsambleMusicant",
-                columns: table => new
-                {
-                    MusicantEnsemblesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MusicantsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EnsambleMusicant", x => new { x.MusicantEnsemblesId, x.MusicantsId });
-                    table.ForeignKey(
-                        name: "FK_EnsambleMusicant_EnsembleMembers_MusicantsId",
-                        column: x => x.MusicantsId,
-                        principalTable: "EnsembleMembers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EnsambleMusicant_Ensemble_MusicantEnsemblesId",
-                        column: x => x.MusicantEnsemblesId,
-                        principalTable: "Ensemble",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Performance",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Place = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MusicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    EnsembleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MusicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MusicalMetadataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -170,22 +171,20 @@ namespace MusicStore.DB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MusicalMetadatas",
+                name: "MusicalMetadata",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Duration = table.Column<double>(type: "float", nullable: false),
                     Tempo = table.Column<int>(type: "int", nullable: false),
-                    Arrangement = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dynamics = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Interpretation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PerformanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MusicalMetadatas", x => x.Id);
+                    table.PrimaryKey("PK_MusicalMetadata", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MusicalMetadatas_Performance_PerformanceId",
+                        name: "FK_MusicalMetadata_Performance_PerformanceId",
                         column: x => x.PerformanceId,
                         principalTable: "Performance",
                         principalColumn: "Id",
@@ -208,23 +207,13 @@ namespace MusicStore.DB.Migrations
                 column: "MusicantsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ensemble_ComposerId",
-                table: "Ensemble",
-                column: "ComposerId");
+                name: "IX_Music_AuthorId",
+                table: "Music",
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ensemble_LeaderId",
-                table: "Ensemble",
-                column: "LeaderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ensemble_OrchestraConductorId",
-                table: "Ensemble",
-                column: "OrchestraConductorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MusicalMetadatas_PerformanceId",
-                table: "MusicalMetadatas",
+                name: "IX_MusicalMetadata_PerformanceId",
+                table: "MusicalMetadata",
                 column: "PerformanceId",
                 unique: true);
 
@@ -244,10 +233,13 @@ namespace MusicStore.DB.Migrations
                 name: "EnsambleMusicant");
 
             migrationBuilder.DropTable(
-                name: "MusicalMetadatas");
+                name: "MusicalMetadata");
 
             migrationBuilder.DropTable(
                 name: "ManufactoringCompany");
+
+            migrationBuilder.DropTable(
+                name: "Musicant");
 
             migrationBuilder.DropTable(
                 name: "Performance");
@@ -259,7 +251,7 @@ namespace MusicStore.DB.Migrations
                 name: "Music");
 
             migrationBuilder.DropTable(
-                name: "EnsembleMembers");
+                name: "Songwriter");
         }
     }
 }
