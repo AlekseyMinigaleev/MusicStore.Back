@@ -5,14 +5,14 @@ namespace MusicStore.DB.Models
     public class Ensemble
     {
         public Guid Id { get; private set; }
-        
+
         public string Type { get; private set; }
 
-        public string Name { get; private set; }
+        public string Name { get;  set; }
         
         public ISet<Performance> Performances { get; private set; }
 
-        public ISet<Musicant> Musicants { get; private set; }
+        public ISet<Musicant> Musicants { get; set; }
 
         public Ensemble(
             string name,

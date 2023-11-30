@@ -10,7 +10,7 @@ namespace MusicStore.Api.Features.Ensembles
         {
         }
 
-        [HttpGet("list")]
+        [HttpGet("Get")]
         public async Task<ActionResult> GetEnsemlesAsync(CancellationToken cancellationToken)
         {
             var query = new GetEnsembles.Query();

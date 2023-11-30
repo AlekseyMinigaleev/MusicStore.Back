@@ -11,10 +11,10 @@ namespace MusicStore.Api.Features.CompactDisks
         {
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetDetailedCompactDisk(
-            [FromQuery] GetDetaildeCompactDisk.Query request,
-            [FromServices] IValidator<GetDetaildeCompactDisk.Query> validator,
+        [HttpGet("Get/{MusicId}")]
+        public async Task<ActionResult> GetCompactDisk(
+            [FromRoute] GetCompactDisk.Query request,
+            [FromServices] IValidator<GetCompactDisk.Query> validator,
             CancellationToken cancellationToken)
         {
             await ValidateAndChangeModelStateAsync(validator, request, cancellationToken);
@@ -23,7 +23,31 @@ namespace MusicStore.Api.Features.CompactDisks
                 return BadRequest(ModelState);
 
             return Ok(await Mediator.Send(request, cancellationToken));
+        }
 
+
+        [HttpGet("List")]
+        public async Task<ActionResult> GetListCompactDisk(
+            CancellationToken cancellationToken)
+        {
+            var request = new GetListCompactDisks.Query();
+
+            return Ok(await Mediator.Send(request, cancellationToken));
+        }
+
+        [HttpPost("Create")]
+        public async Task<ActionResult> CreateCompactDisk(
+            [FromBody] CreateCompactDisk.Query command,
+            [FromServices] IValidator<CreateCompactDisk.Query> validator,
+            CancellationToken cancellationToken)
+        {
+            await ValidateAndChangeModelStateAsync(validator, command, cancellationToken);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await Mediator.Send(command, cancellationToken);
+            return Ok();
         }
     }
 }

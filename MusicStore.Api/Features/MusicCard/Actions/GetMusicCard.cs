@@ -1,49 +1,37 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MusicStore.Api.Features.MusicCard.ViewModels;
 using MusicStore.DB.DataAccess;
-using MusicStore.DB.Enums;
-using MusicStore.DB.Models;
-using MusicStore.DB.TDOs;
 
 namespace MusicStore.Api.Features.MusicCard.Actions
 {
     public class GetMusicCard
     {
-        public class Query : IRequest<MusicCardViewModel[]>
-        { }
-
-        public class MusicCardViewModel
+        public class Query:IRequest<MusicCardViewModel>
         {
-            public Guid Id { get; set; }
-
-            public string MusicName { get; set; }
-
-            public string Genre { get; set; }
-
-            public string Author { get; set; }
-
-            public int PerformanceCount { get; set; }
+            public Guid MusicCardId { get; set; }
         }
 
-        public class MusicCardViewModelProfiler : Profile
+        public class QueryValidator : AbstractValidator<Query>
         {
-            public MusicCardViewModelProfiler()
+            public QueryValidator(MusicStoreDbContext dbContext)
             {
-                CreateMap<Music, MusicCardViewModel>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                    .ForMember(dest => dest.MusicName, opt => opt.MapFrom(src => src.Name))
-                    .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
-                    .ForMember(dest => dest.Author, opt => opt.MapFrom(src => $"{src.Author.LastName} {src.Author.FirstName}"))
-                    .ForMember(dest => dest.PerformanceCount, opt => opt.MapFrom(src => src.Performances.Count()));
+                RuleFor(x => x.MusicCardId)
+                    .MustAsync(async (musicCardId, cancellationToken) =>
+                    {
+                        var music = await dbContext.Musics.SingleOrDefaultAsync(x => x.Id == musicCardId, cancellationToken);
+
+                        return music is not null;
+                    });
             }
         }
 
-        public class Handler : IRequestHandler<Query, MusicCardViewModel[]>
+        public class Handler : IRequestHandler<Query, MusicCardViewModel>
         {
-            public readonly MusicStoreDbContext _dbContext;
-            public readonly IMapper _mapper;
+            private readonly MusicStoreDbContext _dbContext;
+            private readonly IMapper _mapper;
 
             public Handler(
                 MusicStoreDbContext dbContext,
@@ -53,15 +41,16 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                 _mapper = mapper;
             }
 
-            public async Task<MusicCardViewModel[]> Handle(
-                Query request,
-                CancellationToken cancellationToken)
+            public async Task<MusicCardViewModel> Handle(Query request, CancellationToken cancellationToken)
             {
-                var musicCards = await _dbContext.Musics
-                    .ProjectTo<MusicCardViewModel>(_mapper.ConfigurationProvider)
-                    .ToArrayAsync(cancellationToken);
+                var music = await _dbContext.Musics
+                    .Include(x => x.Author)
+                    .Include(x => x.Performances)
+                    .SingleAsync(x => x.Id == request.MusicCardId, cancellationToken: cancellationToken);
 
-                return musicCards;
+                var musicCard = _mapper.Map<MusicCardViewModel>(music);
+
+                return musicCard;
             }
         }
     }

@@ -1,7 +1,9 @@
-﻿using FluentValidation;
+﻿using Bogus;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MusicStore.Api.Features.MusicCard.Actions;
+using MusicStore.DB.DataAccess;
 
 namespace MusicStore.Api.Features.MusicCard
 {
@@ -12,12 +14,26 @@ namespace MusicStore.Api.Features.MusicCard
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult> GetMusicCardAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult> GetListMusicCardAsync(CancellationToken cancellationToken)
         {
-            var query = new GetMusicCard.Query();
+            var query = new GetListMusicCards.Query();
             var result = await Mediator.Send(query, cancellationToken);
 
-            return Ok(result);
+            return Ok(result);  
+        }
+
+        [HttpGet("Get")]
+        public async Task<ActionResult>GetMusicCardAsync(
+           [FromQuery]GetMusicCard.Query query,
+           [FromServices] IValidator<GetMusicCard.Query> validator,
+           CancellationToken cancellationToken)
+        {
+            await ValidateAndChangeModelStateAsync(validator, query, cancellationToken);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(await Mediator.Send(query, cancellationToken));
         }
 
         [HttpPut("update")]
@@ -64,6 +80,24 @@ namespace MusicStore.Api.Features.MusicCard
                 return BadRequest(ModelState);
 
             await Mediator.Send(command, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public ActionResult Seeding(
+            [FromServices] MusicStoreDbContext dbContext)
+        {
+            var faker = new Faker();
+
+            var ensembles = dbContext.Ensembles.ToArray();
+
+            foreach (var item in ensembles)
+            {
+                item.Name = faker.Commerce.ProductName();
+            }
+            
+            dbContext.SaveChanges();
 
             return Ok();
         }

@@ -11,8 +11,8 @@
         public Ensemble Ensemble { get; private set; }
         public Guid EnsembleId { get; set; }
 
-        public Music Music { get; private set; }
-        public Guid MusicId { get; private set; }
+        public Music? Music { get; private set; }
+        public Guid? MusicId { get; private set; }
 
         public MusicalMetadata MusicalMetadata { get; private set; }
         public Guid MusicalMetadataId { get; private set; }
@@ -22,7 +22,7 @@
             string name,
             Ensemble ensambel,
             MusicalMetadata musicalMetadata,
-            Music music)
+            Music? music)
         {
             Id = Guid.NewGuid();
             Place = place;
@@ -32,7 +32,7 @@
             MusicalMetadata = musicalMetadata;
             MusicalMetadataId = musicalMetadata.Id;
             Music = music;
-            MusicId = music.Id;
+            MusicId = music?.Id;
         }
 
         private Performance()

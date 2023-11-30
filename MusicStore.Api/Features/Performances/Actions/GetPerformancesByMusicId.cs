@@ -25,8 +25,6 @@ namespace MusicStore.Api.Features.Performances.Actions
 
             public Ensemble Ensemble { get; private set; }
 
-            public Music Music { get; private set; }
-
             public MusicalMetadata MusicalMetadata { get; private set; }
         }
 

@@ -14,6 +14,10 @@ namespace MusicStore.DB.ModelsConfigurations
             builder.HasMany(x => x.Musicants)
                 .WithMany(x => x.Ensembles)
                 .UsingEntity(x => x.ToTable("EnsambleMusicant"));
+
+            builder.HasMany(x => x.Performances)
+                .WithOne(x => x.Ensemble)
+                .HasForeignKey(x => x.EnsembleId);
         }
     }
 }

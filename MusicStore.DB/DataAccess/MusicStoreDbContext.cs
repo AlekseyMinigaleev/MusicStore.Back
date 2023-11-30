@@ -11,7 +11,7 @@ namespace MusicStore.DB.DataAccess
 
         public DbSet<CompactDisk> CompactDisks { get; set; }
         public DbSet<Ensemble> Ensembles { get; set; }
-        public DbSet<ManufacturingCompany> Manufacturings { get; set; }
+        public DbSet<ManufacturingCompany> ManufacturingCompanies { get; set; }
         public DbSet<Music> Musics { get; set; }
         public DbSet<MusicalMetadata> MusicalMetadatas { get; set; }
         public DbSet<Musicant> Musicants { get; set; }
