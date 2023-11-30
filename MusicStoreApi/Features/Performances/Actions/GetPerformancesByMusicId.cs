@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 using MusicStore.DB.DataAccess;
 using MusicStore.DB.Models;
 
@@ -25,14 +26,29 @@ namespace MusicStore.Api.Features.Performances.Actions
 
             public Ensemble Ensemble { get; private set; }
 
-            public MusicalMetadata MusicalMetadata { get; private set; }
+            public MusicalMetadataViewModel MusicalMetadata { get; private set; }
+        }
+
+        public class MusicalMetadataViewModel
+        {
+            public Guid Id { get; private set; }
+
+            public TimeSpan Duration { get; private set; }
+
+            public string Tempo { get; private set; }
+
+            public string Interpretation { get; private set; }
         }
 
         public class ViewModelProfiler : Profile
         {
             public ViewModelProfiler()
             {
-                CreateMap<Performance, ViewModel>();
+                CreateMap<Performance, ViewModel>()
+                    .ForMember(dest => dest.MusicalMetadata, opt => opt.MapFrom(src => src.MusicalMetadata));
+
+                CreateMap<MusicalMetadata, MusicalMetadataViewModel>()
+                    .ForMember(dest => dest.Tempo, opt => opt.MapFrom(src => src.Tempo.GetDisplayName()));
             }
         }
 
@@ -43,7 +59,7 @@ namespace MusicStore.Api.Features.Performances.Actions
                 RuleFor(x => x.musicCardId)
                     .MustAsync(async (id, cancellationToken) =>
                     {
-                        var result = await dbContext.Musics.FirstOrDefaultAsync(x => x.Id == id);
+                        var result = await dbContext.Musics.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
                         return result is not null;
                     })

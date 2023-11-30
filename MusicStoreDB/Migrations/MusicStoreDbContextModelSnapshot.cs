@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MusicStore.DB.DataAccess;
 
@@ -12,11 +11,9 @@ using MusicStore.DB.DataAccess;
 namespace MusicStore.DB.Migrations
 {
     [DbContext(typeof(MusicStoreDbContext))]
-    [Migration("20231101174924_fix2")]
-    partial class fix2
+    partial class MusicStoreDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,8 +151,8 @@ namespace MusicStore.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Duration")
-                        .HasColumnType("float");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<string>("Interpretation")
                         .IsRequired()
@@ -198,12 +195,13 @@ namespace MusicStore.DB.Migrations
             modelBuilder.Entity("MusicStore.DB.Models.Performance", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EnsembleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MusicId")
+                    b.Property<Guid?>("MusicId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("MusicalMetadataId")
@@ -218,6 +216,8 @@ namespace MusicStore.DB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnsembleId");
 
                     b.HasIndex("MusicId");
 
@@ -298,15 +298,13 @@ namespace MusicStore.DB.Migrations
                 {
                     b.HasOne("MusicStore.DB.Models.Ensemble", "Ensemble")
                         .WithMany("Performances")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("EnsembleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MusicStore.DB.Models.Music", "Music")
                         .WithMany("Performances")
-                        .HasForeignKey("MusicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MusicId");
 
                     b.HasOne("MusicStore.DB.Models.MusicalMetadata", "MusicalMetadata")
                         .WithOne()

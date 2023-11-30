@@ -6,14 +6,14 @@ namespace MusicStore.DB.Models
     {
         public Guid Id { get; private set; }
 
-        public double Duration { get; private set; }
+        public TimeSpan Duration { get; private set; }
 
         public MusicTempo Tempo { get; private set; }
 
         public string Interpretation { get; private set; }
 
         public MusicalMetadata(
-            double duration,
+            TimeSpan duration,
             MusicTempo tempo,
             string interpretation)
         {

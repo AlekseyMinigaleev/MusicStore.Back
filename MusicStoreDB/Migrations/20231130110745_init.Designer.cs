@@ -12,7 +12,7 @@ using MusicStore.DB.DataAccess;
 namespace MusicStore.DB.Migrations
 {
     [DbContext(typeof(MusicStoreDbContext))]
-    [Migration("20231101121045_init")]
+    [Migration("20231130110745_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -89,6 +89,10 @@ namespace MusicStore.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -150,23 +154,17 @@ namespace MusicStore.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Duration")
-                        .HasColumnType("float");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<string>("Interpretation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PerformanceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Tempo")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PerformanceId")
-                        .IsUnique();
 
                     b.ToTable("MusicalMetadata", (string)null);
                 });
@@ -200,12 +198,13 @@ namespace MusicStore.DB.Migrations
             modelBuilder.Entity("MusicStore.DB.Models.Performance", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EnsembleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MusicId")
+                    b.Property<Guid?>("MusicId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("MusicalMetadataId")
@@ -221,7 +220,12 @@ namespace MusicStore.DB.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EnsembleId");
+
                     b.HasIndex("MusicId");
+
+                    b.HasIndex("MusicalMetadataId")
+                        .IsUnique();
 
                     b.ToTable("Performance", (string)null);
                 });
@@ -284,43 +288,38 @@ namespace MusicStore.DB.Migrations
 
             modelBuilder.Entity("MusicStore.DB.Models.Music", b =>
                 {
-                    b.HasOne("MusicStore.DB.Models.Songwriter", "Autor")
+                    b.HasOne("MusicStore.DB.Models.Songwriter", "Author")
                         .WithMany("Musics")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Autor");
-                });
-
-            modelBuilder.Entity("MusicStore.DB.Models.MusicalMetadata", b =>
-                {
-                    b.HasOne("MusicStore.DB.Models.Performance", "Performance")
-                        .WithOne("MusicalMetadata")
-                        .HasForeignKey("MusicStore.DB.Models.MusicalMetadata", "PerformanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Performance");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("MusicStore.DB.Models.Performance", b =>
                 {
                     b.HasOne("MusicStore.DB.Models.Ensemble", "Ensemble")
                         .WithMany("Performances")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("EnsembleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MusicStore.DB.Models.Music", "Music")
                         .WithMany("Performances")
-                        .HasForeignKey("MusicId")
+                        .HasForeignKey("MusicId");
+
+                    b.HasOne("MusicStore.DB.Models.MusicalMetadata", "MusicalMetadata")
+                        .WithOne()
+                        .HasForeignKey("MusicStore.DB.Models.Performance", "MusicalMetadataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Ensemble");
 
                     b.Navigation("Music");
+
+                    b.Navigation("MusicalMetadata");
                 });
 
             modelBuilder.Entity("MusicStore.DB.Models.Ensemble", b =>
@@ -338,12 +337,6 @@ namespace MusicStore.DB.Migrations
                     b.Navigation("CompactDisks");
 
                     b.Navigation("Performances");
-                });
-
-            modelBuilder.Entity("MusicStore.DB.Models.Performance", b =>
-                {
-                    b.Navigation("MusicalMetadata")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("MusicStore.DB.Models.Songwriter", b =>

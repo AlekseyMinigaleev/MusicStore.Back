@@ -12,8 +12,8 @@ using MusicStore.DB.DataAccess;
 namespace MusicStore.DB.Migrations
 {
     [DbContext(typeof(MusicStoreDbContext))]
-    [Migration("20231115164903_Performance_nullable_Music")]
-    partial class Performance_nullable_Music
+    [Migration("20231130115823_seeding")]
+    partial class seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,8 +154,8 @@ namespace MusicStore.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Duration")
-                        .HasColumnType("float");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<string>("Interpretation")
                         .IsRequired()
@@ -198,6 +198,7 @@ namespace MusicStore.DB.Migrations
             modelBuilder.Entity("MusicStore.DB.Models.Performance", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EnsembleId")
@@ -218,6 +219,8 @@ namespace MusicStore.DB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnsembleId");
 
                     b.HasIndex("MusicId");
 
@@ -298,7 +301,7 @@ namespace MusicStore.DB.Migrations
                 {
                     b.HasOne("MusicStore.DB.Models.Ensemble", "Ensemble")
                         .WithMany("Performances")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("EnsembleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

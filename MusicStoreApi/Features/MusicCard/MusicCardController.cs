@@ -22,6 +22,12 @@ namespace MusicStore.Api.Features.MusicCard
             return Ok(result);  
         }
 
+        [HttpGet("HelloWorld")]
+        public ActionResult HelloWorld()
+        {
+            return Ok("HelloWold");
+        }
+
         [HttpGet("Get")]
         public async Task<ActionResult>GetMusicCardAsync(
            [FromQuery]GetMusicCard.Query query,
