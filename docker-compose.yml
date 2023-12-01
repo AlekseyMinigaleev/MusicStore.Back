@@ -1,20 +1,46 @@
-version: "3.4"
+version: '3.4'
+
+networks:
+  backend: 
 
 services:
-    api:
-        build:
-          context: .
-          dockerfile: Dockerfile
-        ports:
-          - "5000:5000"
-        depends_on:
-          - db
+  musicstoredb:
+    container_name: musicstore-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Qwerty!123
+    networks:
+        - backend
+    ports: 
+        - 8001:1433
 
-    db:
-        image: "mcr.microsoft.com/mssql/server:2022-latest"
-        ports:
-          - "1433:1433"
+  musicstoreapi:
+    container_name: musicstore-api
+    build:
+      context: .
+      dockerfile: MusicStoreApi/Dockerfile
+    networks: 
+        - backend
+    ports:
+        - 8002:80
+    environment:
+        - DB_HOST=musicstoredb
+        - DB_NAME=MusicStore
+        - DB_SA_PASSWORD=Qwerty!123
+    depends_on:
+        - musicstoredb
 
-        environment:
-            SA_PASSWORD: ""
-            ACCEPT_EULA: "Y"
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    networks:
+        - backend
+    ports:
+        - 80:80
+    volumes:
+        - ./nginx/defalult.conf:/etc/nginx/default.conf
+    depends_on:
+        - musicstoreapi
+    links:
+        - musicstoreapi

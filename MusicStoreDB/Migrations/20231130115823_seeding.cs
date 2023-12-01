@@ -130,8 +130,11 @@ namespace MusicStore.DB.Migrations
 
             var compactDiscs = compactDiscFaker.Generate(10);
 
-            var connectionString = "Server=.;Database=MusicStore;Trusted_Connection=True;Trust Server Certificate=Yes;";
-
+            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+            var connectionString = $"Data Source = {dbHost}; Initial Catalog={dbName};Integrated security=False; User ID=sa; Password={dbPassword};Trust Server Certificate=Yes;";
+            
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
