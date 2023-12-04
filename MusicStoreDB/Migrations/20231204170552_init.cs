@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MusicStore.DB.Migrations
+namespace MusicStoreDB.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration
@@ -181,7 +181,8 @@ namespace MusicStore.DB.Migrations
                         name: "FK_Performance_Music_MusicId",
                         column: x => x.MusicId,
                         principalTable: "Music",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Performance_MusicalMetadata_MusicalMetadataId",
                         column: x => x.MusicalMetadataId,

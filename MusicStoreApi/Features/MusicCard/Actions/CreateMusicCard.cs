@@ -2,9 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MusicStore.DB.DataAccess;
-using MusicStore.DB.Enums;
 using MusicStore.DB.Models;
-using MusicStore.DB.TDOs;
 
 namespace MusicStore.Api.Features.MusicCard.Actions
 {
@@ -18,7 +16,14 @@ namespace MusicStore.Api.Features.MusicCard.Actions
 
             public Guid AuthorId { get; set; }
 
-            public Guid[] Performances { get; set; }
+            public Performances[] Performances { get; set; }
+        }
+
+        public class Performances 
+        {
+            public Guid Id { get; set; }
+
+            public string Name { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -37,7 +42,7 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                     })
                     .WithMessage("the author with specified id does not exist");
 
-                RuleFor(x => x.Performances)
+                RuleFor(x => x.Performances.Select(x=>x.Id))
                     .MustAsync(async (command, performanceIds, validationContext, cancellationToken) =>
                     {
                         var nonExistentIds = new List<Guid>();
@@ -84,7 +89,7 @@ namespace MusicStore.Api.Features.MusicCard.Actions
                         cancellationToken);
 
                 var pefrormances = _dbContext.Performances
-                    .Where(x => request.Performances.Contains(x.Id))
+                    .Where(x => request.Performances.Select(x=>x.Id).Contains(x.Id))
                     .ToHashSet();
 
                 var music = new Music(

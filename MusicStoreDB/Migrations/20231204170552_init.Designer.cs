@@ -9,11 +9,11 @@ using MusicStore.DB.DataAccess;
 
 #nullable disable
 
-namespace MusicStore.DB.Migrations
+namespace MusicStoreDB.Migrations
 {
     [DbContext(typeof(MusicStoreDbContext))]
-    [Migration("20231130115823_seeding")]
-    partial class seeding
+    [Migration("20231204170552_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -307,7 +307,8 @@ namespace MusicStore.DB.Migrations
 
                     b.HasOne("MusicStore.DB.Models.Music", "Music")
                         .WithMany("Performances")
-                        .HasForeignKey("MusicId");
+                        .HasForeignKey("MusicId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("MusicStore.DB.Models.MusicalMetadata", "MusicalMetadata")
                         .WithOne()

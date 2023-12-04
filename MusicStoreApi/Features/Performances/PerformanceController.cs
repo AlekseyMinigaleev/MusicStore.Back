@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MusicStore.Api.Features.Performances.Actions;
+using MusicStoreApi.Features.Performances.Actions;
 
 namespace MusicStore.Api.Features.Performances
 {
@@ -23,6 +24,17 @@ namespace MusicStore.Api.Features.Performances
                 return BadRequest(ModelState);
 
             return Ok(await Mediator.Send(query, cancellationToken));
+        }
+
+
+        [HttpPost("Create")]
+        public async Task<ActionResult> CreatePerformance(
+            CreatePerformance.Command command,
+            CancellationToken cancellationToken)
+        {
+            var performance = await Mediator.Send(command, cancellationToken);
+
+            return Ok(performance);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace MusicStore.Api.Features.CompactDisks.ViewModels
         public decimal RetailPrice { get; set; }
         public decimal WhosalerPrice { get; set; }
         public string ManufacturingCompanyName { get; set; }
+        public int CountInStock { get; set; }
         public Guid MusicId { get; set; }
     }
 

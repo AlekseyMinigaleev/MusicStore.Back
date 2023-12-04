@@ -7,7 +7,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["MusicStoreApi/MusicStoreApi.csproj", "MusicStoreApi/"]
 COPY ["MusicStoreDB/MusicStoreDB.csproj", "MusicStoreDB/"]
-RUN dotnet restore "./MusicStoreApi/./MusicStoreApi.csproj"
+RUN dotnet restore "./MusicStoreApi/MusicStoreApi.csproj"
 COPY . .
 WORKDIR "/src/MusicStoreApi"
 RUN dotnet build "./MusicStoreApi.csproj" -c $BUILD_CONFIGURATION -o /app/build

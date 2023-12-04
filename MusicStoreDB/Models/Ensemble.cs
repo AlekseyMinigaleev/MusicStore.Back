@@ -4,6 +4,9 @@ namespace MusicStore.DB.Models
 {
     public class Ensemble
     {
+        private EnsembleTypeRuleDto[] ensumbleTypeRuleDto;
+        private HashSet<Performance> performance;
+
         public Guid Id { get; private set; }
 
         public string Type { get; private set; }

@@ -8,7 +8,7 @@ using MusicStore.DB.DataAccess;
 
 #nullable disable
 
-namespace MusicStore.DB.Migrations
+namespace MusicStoreDB.Migrations
 {
     [DbContext(typeof(MusicStoreDbContext))]
     partial class MusicStoreDbContextModelSnapshot : ModelSnapshot
@@ -304,7 +304,8 @@ namespace MusicStore.DB.Migrations
 
                     b.HasOne("MusicStore.DB.Models.Music", "Music")
                         .WithMany("Performances")
-                        .HasForeignKey("MusicId");
+                        .HasForeignKey("MusicId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("MusicStore.DB.Models.MusicalMetadata", "MusicalMetadata")
                         .WithOne()

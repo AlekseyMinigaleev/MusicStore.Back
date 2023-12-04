@@ -77,7 +77,7 @@ namespace MusicStore.DB.Enums
         [Display(Name = "Живо")]
         Vivo,
         [Display(Name = "Очень живо")]
-        Vivace,
+        Vivace, 
         [Display(Name = "Быстро")]
         Presto,
         [Display(Name = "Очень быстро (предельно)")]

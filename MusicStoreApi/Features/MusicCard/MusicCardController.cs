@@ -22,15 +22,9 @@ namespace MusicStore.Api.Features.MusicCard
             return Ok(result);  
         }
 
-        [HttpGet("HelloWorld")]
-        public ActionResult HelloWorld()
-        {
-            return Ok("HelloWold");
-        }
-
-        [HttpGet("Get")]
+        [HttpGet("Get/{MusicCardId}")]
         public async Task<ActionResult>GetMusicCardAsync(
-           [FromQuery]GetMusicCard.Query query,
+           [FromRoute]GetMusicCard.Query query,
            [FromServices] IValidator<GetMusicCard.Query> validator,
            CancellationToken cancellationToken)
         {
@@ -86,24 +80,6 @@ namespace MusicStore.Api.Features.MusicCard
                 return BadRequest(ModelState);
 
             await Mediator.Send(command, cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpPost]
-        public ActionResult Seeding(
-            [FromServices] MusicStoreDbContext dbContext)
-        {
-            var faker = new Faker();
-
-            var ensembles = dbContext.Ensembles.ToArray();
-
-            foreach (var item in ensembles)
-            {
-                item.Name = faker.Commerce.ProductName();
-            }
-            
-            dbContext.SaveChanges();
 
             return Ok();
         }

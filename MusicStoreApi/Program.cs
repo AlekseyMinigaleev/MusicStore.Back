@@ -8,7 +8,6 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-//var connectionString = builder.Configuration.GetConnectionString("MusicStore");
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
@@ -19,10 +18,19 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddCors();
 
-var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
-var connectionString = $"Data Source = {dbHost}; Initial Catalog={dbName};Integrated security=False; User ID=sa; Password={dbPassword};Trust Server Certificate=Yes;";
+string connectionString;
+
+if (builder.Environment.IsDevelopment())
+{
+    connectionString = builder.Configuration.GetConnectionString("MusicStore");
+}
+else
+{
+    var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+    var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+    var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+    connectionString = $"Data Source = {dbHost}; Initial Catalog={dbName};Integrated security=False; User ID=sa; Password={dbPassword};Trust Server Certificate=Yes;";
+}
 
 builder.Services.AddDbContext<MusicStoreDbContext>(options =>
     options.UseSqlServer(connectionString));

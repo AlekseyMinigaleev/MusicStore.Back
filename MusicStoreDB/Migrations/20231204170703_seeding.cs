@@ -1,22 +1,21 @@
 ﻿using Bogus;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Query;
 using MusicStore.DB.Enums;
 using MusicStore.DB.Models;
 
 #nullable disable
 
-namespace MusicStore.DB.Migrations
+namespace MusicStoreDB.Migrations
 {
     /// <inheritdoc />
     public partial class seeding : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             var musicNamesAuthorsGenres = new[]
-            {
+          {
                 new { Name = "Буремные высоты", Author = "Петр Чайковский", Genre = "Симфония" },
                 new { Name = "Соул серфинг", Author = "Майкл Джексон", Genre = "Поп, соул" },
                 new { Name = "Летящий в небесах", Author = "Эрик Клэптон", Genre = "Рок, блюз" },
@@ -89,7 +88,7 @@ namespace MusicStore.DB.Migrations
                                     ensambel: new Ensemble(
                                             name: selectedEnsembleNames.Ensemble,
                                             musicants:  new HashSet<Musicant>(),
-                                            ensumbleTypeRuleDto: new List<TDOs.EnsembleTypeRuleDto>().ToArray(),
+                                            ensumbleTypeRuleDto: new List<MusicStore.DB.TDOs.EnsembleTypeRuleDto>().ToArray(),
                                             performance: new HashSet<Performance>()
                                         ),
                                     musicalMetadata: new MusicalMetadata(
@@ -130,11 +129,8 @@ namespace MusicStore.DB.Migrations
 
             var compactDiscs = compactDiscFaker.Generate(10);
 
-            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-            var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
-            var connectionString = $"Data Source = {dbHost}; Initial Catalog={dbName};Integrated security=False; User ID=sa; Password={dbPassword};Trust Server Certificate=Yes;";
-            
+            var connectionString = "Server=.;Database=MusicStore;Trusted_Connection=True;Trust Server Certificate=Yes;";
+
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
@@ -224,7 +220,7 @@ namespace MusicStore.DB.Migrations
 
                     using var cmd = new SqlCommand(insertQuery, connection, transaction);
                     cmd.Parameters.AddWithValue("@Id", ensemble.Id);
-                    cmd.Parameters.AddWithValue("@Type", ensemble.Type);
+                    cmd.Parameters.AddWithValue("@Type", "undefind");
                     cmd.Parameters.AddWithValue("@Name", ensemble.Name);
 
                     cmd.ExecuteNonQuery();
@@ -279,6 +275,7 @@ namespace MusicStore.DB.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+
         }
     }
 }
